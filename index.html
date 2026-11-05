@@ -1,7 +1,86 @@
 <!doctype html>
 <html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cafetera del turno A · Cuenta común</title>
-<style>:root{color-scheme:light;--ink:#302820;--muted:#6b6157;--line:#ddd2c2;--cream:#fcf8ee;--accent:#8b3e24;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#f1eadc}*{box-sizing:border-box}body{margin:0;padding:20px 16px calc(30px + env(safe-area-inset-bottom));min-height:100vh}header,main{width:min(100%,740px);margin:auto}header{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:space-between;background:#34291f;color:#fff1d6;border-radius:23px;padding:30px clamp(21px,5vw,44px);gap:10px;border-bottom:4px solid #b78b58}header svg{width:clamp(80px,22vw,140px);flex:none;color:#dfb576}h1,h2,h3,summary{margin:0}h1{font:normal clamp(30px,6.6vw,55px)/1.05 Georgia,serif;letter-spacing:-.045em;max-width:12ch}.badge{display:inline-block;margin-top:12px;color:#e7cca7;font-size:14px}.panel,.picker,details.panel{background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,4vw,28px);margin-top:14px}h2{font:normal 26px/1.15 Georgia,serif;letter-spacing:-.025em}.small,.entry p,#balanceLabel{font-size:14px;color:var(--muted);line-height:1.45}.grid{margin-top:13px}.person{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:1px 13px;width:100%;text-align:left;background:transparent;border:0;border-radius:0;border-top:1px solid var(--line);padding:12px 3px}.avatar{grid-row:span 2;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#e4d8c1;color:#4b3d26;font:600 16px Georgia,serif}.person:nth-child(2n) .avatar{background:#dbe1d1;color:#394b35}.person:nth-child(3n) .avatar{background:#edd5c6;color:#713e29}.person .name{grid-column:2;grid-row:1 / span 2;font-weight:650}.person .amount,.person .small{grid-column:3;text-align:right}.person .amount{font-weight:700}.person .small{font-size:12px}.grid.signed-out .amount,.grid.signed-out .small{display:none}.grid.signed-out .person:after{content:'›';font-size:24px;color:var(--accent);grid-column:3;grid-row:1 / span 2}button,select,input{font:inherit;color:inherit}button,select,input:not([type=checkbox]){min-height:46px}button{cursor:pointer;border:1px solid var(--line);background:#fffaf1;padding:9px 13px;border-radius:10px}button:disabled{opacity:.55;cursor:default}button.primary{background:var(--accent);color:white;border-color:transparent;font-weight:650}button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #417362;outline-offset:2px}button:active:not(:disabled){transform:translateY(1px)}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.accountHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.accountHead h2{margin-top:5px}.eyebrow{font-size:11px;letter-spacing:.11em;font-weight:700;text-transform:uppercase}.balanceBox{margin:18px 0;padding:22px;background:#e7ebde;border-radius:14px;color:#253e32}.balanceBox .amount{font:normal clamp(43px,10vw,62px)/1.15 Georgia,serif;font-variant-numeric:tabular-nums}.balanceBox .small{color:#405749}#coffee{margin-top:16px;width:100%;font-size:17px;min-height:52px}summary{cursor:pointer;padding:12px 0;font-weight:650}details.operations{border-top:1px solid var(--line)}label{display:block;font-weight:650;font-size:14px}input:not([type=checkbox]),select{display:block;background:#fffdf8;border:1px solid #bdb09f;border-radius:9px;padding:10px 12px;width:100%;margin:6px 0 15px;font-size:16px}.actions button.primary,form#contribution button{width:100%}.notice{font-size:12px;color:var(--muted);margin:14px 4px;line-height:1.5}.switcher{display:flex;gap:4px;margin:16px 0 0;padding:4px;border:1px solid var(--line);border-radius:14px;background:#e6dece}.switcher button{flex:1;background:transparent;border:0;font-size:14px;font-weight:650;padding:7px 3px}.switcher button[aria-pressed=true]{background:#fffaf0;box-shadow:0 1px 3px #30282023}.entry{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;border-top:1px solid var(--line);padding:15px 0;overflow-wrap:anywhere}.entry :first-child{min-width:0}.entry>div:last-child{text-align:right;flex:none}.entry button{display:block;margin:5px 0 0 auto!important;font-size:12px}.entry p{margin:5px 0 0}.entry strong{font-size:15px}#history{margin-top:16px}#filter{max-width:100%}dialog{background:var(--cream);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:24px;width:min(92vw,425px);max-height:85dvh;box-shadow:0 18px 90px #21190e44}dialog::backdrop{background:#291f17a3}dialog h2{margin-bottom:14px}#message{position:fixed;z-index:20;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:90%;background:#302820;color:white;padding:13px 18px;border-radius:12px}footer{margin:18px 4px;font-size:12px;color:var(--muted)}[hidden]{display:none!important}@media(max-width:420px){body{padding:12px 10px 24px}header{padding:22px 18px}.accountHead button{font-size:13px}.entry>div:last-child{max-width:35%}}</style>
-<header><div><h1>Cafetera del turno A</h1><span class="badge">0,50 € por café</span></div><svg viewBox="0 0 160 130" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-9 80 75)"><ellipse cx="78" cy="100" rx="62" ry="13"/><path d="M24 51c1 32 17 47 47 47s45-21 47-47"/><ellipse cx="71" cy="51" rx="47" ry="12"/><ellipse cx="71" cy="54" rx="37" ry="7"/><path d="M118 55c28-12 28 20-7 24M54 32c-15-12 11-14 1-27m18 25c-10-10 11-15 5-25m16 28c-8-8 9-12 4-21"/></g></svg></header>
+<style>:root{
+  color-scheme:light;
+  --canvas:#f5f5f7;--paper:#ffffff;--ink:#1d1d1f;--muted:#707070;
+  --hairline:#d6d6d6;--neutral:#e2e2e5;--blue:#0071e3;--link:#0066cc;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Inter,system-ui,sans-serif;
+  color:var(--ink);background:var(--canvas);
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:0 16px calc(40px + env(safe-area-inset-bottom));font-size:17px;line-height:1.47}
+header{background:var(--paper);border-bottom:1px solid var(--hairline);margin:0 -16px 0;padding:44px max(24px,calc((100vw - 880px)/2));}
+header>div{max-width:880px;margin:0 auto}
+header h1{max-width:12ch;font-size:clamp(39px,7vw,64px);line-height:1.06;letter-spacing:-.015em;font-weight:600;margin:0}
+header .badge{display:block;margin-top:16px;font-size:17px;font-weight:400;color:#474747}
+main{width:min(100%,880px);margin:0 auto}
+h2{font-size:clamp(24px,4.5vw,28px);line-height:1.14;letter-spacing:-.009em;font-weight:600;margin:0}
+p{margin:10px 0}
+.small,.entry p,#balanceLabel{font-size:14px;line-height:1.43;color:var(--muted)}
+.panel,.picker{background:var(--paper);border-radius:28px;padding:clamp(24px,5vw,40px);margin-top:20px}
+.picker{margin-top:28px}
+.switcher{display:flex;gap:4px;margin:20px 0 0;padding:4px;background:var(--neutral);border-radius:980px}
+.switcher button{flex:1;min-width:0;background:transparent;border:0;font-size:14px;font-weight:600;padding:11px 4px;color:#333336}
+.switcher button[aria-pressed=true]{background:var(--paper);color:var(--ink)}
+button,select,input{font:inherit;color:inherit}
+button{min-height:44px;cursor:pointer;border:0;border-radius:980px;background:var(--neutral);padding:11px 20px;font-size:14px;font-weight:600;line-height:1.2}
+button.primary{background:var(--blue);color:#fff}
+button:disabled{opacity:.48;cursor:default}
+button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.row,.accountHead{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.accountHead h2{margin-top:6px}
+.eyebrow{font-size:12px;letter-spacing:.06em;font-weight:600;text-transform:uppercase;color:var(--muted)}
+.balanceBox{margin:28px 0 20px;padding:0;background:transparent}
+.balanceBox .amount{font-size:clamp(58px,12vw,80px);font-weight:600;letter-spacing:-.019em;line-height:1.04;font-variant-numeric:tabular-nums;margin:7px 0 22px}
+#balanceLabel{font-size:17px;color:#474747}
+#coffee{min-height:54px;width:100%;font-size:17px}
+details.operations{border-top:1px solid var(--hairline)}
+details.operations:last-child{border-bottom:1px solid var(--hairline)}
+summary{list-style:none;cursor:pointer;font-size:17px;font-weight:600;padding:20px 0}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'+';float:right;font-size:24px;font-weight:400;line-height:22px}
+details[open] summary::after{content:'−'}
+#contribution{padding:6px 0 24px}
+label{display:block;font-size:14px;font-weight:600}
+input:not([type=checkbox]),select{display:block;min-height:48px;width:100%;border:1px solid var(--hairline);border-radius:10px;background:var(--paper);padding:10px 14px;margin:8px 0 20px;font-size:17px}
+#filter{width:auto;max-width:100%;margin:0;font-size:14px}
+#contribution button{width:100%;font-size:17px}
+.grid{margin-top:20px}
+.person{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:1px 14px;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid var(--hairline);border-radius:0;padding:17px 0}
+.person:first-child{border-top:0}
+.avatar{grid-row:span 2;display:grid;place-items:center;width:44px;height:44px;border-radius:980px;background:var(--neutral);color:#333336;font-size:17px;font-weight:600}
+.person .name{grid-column:2;grid-row:1 / span 2;font-weight:600;overflow-wrap:anywhere}
+.person .amount,.person .small{grid-column:3;text-align:right;font-variant-numeric:tabular-nums}
+.person .amount{font-size:17px;font-weight:600}
+.person .small{font-size:12px}
+.grid.signed-out .amount,.grid.signed-out .small{display:none}
+.grid.signed-out .person::after{content:'›';font-size:27px;font-weight:400;color:var(--muted);grid-column:3;grid-row:1 / span 2}
+.entry{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-top:1px solid var(--hairline);padding:18px 0;overflow-wrap:anywhere}
+.entry>div:first-child{min-width:0}
+.entry>div:last-child{flex:none;text-align:right}
+.entry p{margin:6px 0 0}
+.entry strong{font-size:14px;font-weight:600}
+.entry button{display:block;margin:9px 0 0 auto!important;font-size:12px;min-height:36px;padding:8px 14px}
+#history{margin-top:20px}
+.notice,footer{font-size:12px;line-height:1.4;color:var(--muted);margin:24px 8px}
+.notice{padding-top:16px;border-top:1px solid var(--hairline)}
+dialog{width:min(92vw,440px);max-height:85dvh;background:var(--paper);color:var(--ink);border:0;border-radius:28px;padding:28px}
+dialog::backdrop{background:#1d1d1f99}
+dialog h2{margin-bottom:22px}
+dialog .row button{flex:1}
+#message{position:fixed;z-index:20;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:90vw;background:var(--ink);color:white;border-radius:10px;padding:12px 16px;font-size:14px}
+[hidden]{display:none!important}
+@media(max-width:480px){
+  header{padding:40px 24px 34px}
+  .panel,.picker{padding:24px;margin-top:14px}
+  .picker{margin-top:20px}
+  .accountHead button{font-size:12px;padding:9px 14px}
+  .entry>div:last-child{max-width:36%}
+  #ledger .row{align-items:stretch}
+  #filter{width:100%}
+}
+</style>
+<header><div><h1>Cafetera del turno A</h1><span class="badge">0,50 € por café</span></div></header>
 <main><nav id="views" class="switcher" aria-label="Secciones" hidden><button data-view="account">Mi cuenta</button><button data-view="team">El turno</button><button data-view="ledger">Historial</button></nav>
 <section id="account" class="panel" hidden><div class="accountHead"><div><span class="eyebrow">Mi cuenta</span><h2 id="who"></h2></div><button id="logout">Cerrar sesión</button></div><div class="balanceBox"><div id="balanceLabel" class="small"></div><div id="balance" class="amount"></div><button id="coffee" class="primary">Apuntarme un café · 0,50 €</button></div><details class="operations"><summary>Registrar un pago o una compra</summary><form id="contribution"><label for="kind">Tipo</label><select id="kind"><option value="payment">Pagar en la cafetera</option><option value="peer">Pagar a un compañero</option><option value="product">Comprar un producto</option></select><div id="peerFields" hidden><label for="recipient">A quién has pagado</label><select id="recipient"></select><p class="small" id="peerLimit"></p></div><label for="money">Importe (€)</label><input id="money" type="text" inputmode="decimal" placeholder="Ej. 3,75" required maxlength="10"><label for="note" id="noteLabel">Nota (opcional)</label><input id="note" maxlength="160" placeholder="Ej. 2 paquetes de café"><button class="primary">Descontar de mi deuda</button></form></details><details class="operations"><summary>Ajustes de cuenta</summary><div class="row"><button id="changePassword">Cambiar mi contraseña</button><button id="refresh">Actualizar cuentas</button></div></details></section>
 <section id="team" class="picker"><h2 id="teamHeading">Elige tu cuenta</h2><div id="people" class="grid signed-out"></div></section>
