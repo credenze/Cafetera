@@ -5,10 +5,19 @@
 </style>
 <header><div><span class="eyebrow">LA PAUSA QUE COMPARTIMOS</span><h1>Café de turno<span style="color:#a07849">.</span></h1></div><span class="badge">☕ 0,50 € / café</span></header>
 <main><p class="intro">Cinco compañeros, una cafetera. Apunta tu café y descuenta lo que aportas para que las cuentas estén claras.</p><div class="notice"><b id="connection">Comprobando configuración…</b> <span id="connectionHint">Las cuentas compartidas requieren configurar la conexión en config.js.</span></div><h2>Las cuentas del turno</h2><div id="people" class="grid"></div>
-<section id="account" class="panel" hidden><div class="row"><div><span class="eyebrow">TU CUENTA</span><h2 id="who"></h2></div><button id="logout">Cerrar sesión</button></div><div class="actions"><div><div id="balance" class="amount"></div><div id="balanceLabel" class="small"></div><button id="coffee" class="primary">☕ Apuntarme un café · 0,50 €</button><p class="small">Cada pulsación confirmada registra un café.</p></div><form id="contribution"><h2>Registrar una aportación</h2><label for="kind">Tipo</label><select id="kind"><option value="payment">Pago a la caja</option><option value="coffee">Compra de café</option><option value="milk">Compra de leche</option><option value="sugar">Compra de azúcar</option></select><label for="money">Importe (€)</label><input id="money" type="text" inputmode="decimal" placeholder="Ej. 3,75" required maxlength="10"><label for="note">Nota (opcional)</label><input id="note" maxlength="160" placeholder="Ej. 2 paquetes de café"><button class="primary">Descontar de mi deuda</button></form></div><div class="row"><p class="small">¿Te has equivocado? Puedes anular tus apuntes en el historial.</p><button id="refresh">Actualizar cuentas</button></div></section>
+<section id="account" class="panel" hidden><div class="row"><div><span class="eyebrow">TU CUENTA</span><h2 id="who"></h2></div><button id="logout">Cerrar sesión</button></div><div class="actions"><div><div id="balance" class="amount"></div><div id="balanceLabel" class="small"></div><button id="coffee" class="primary">☕ Apuntarme un café · 0,50 €</button><p class="small">Cada pulsación confirmada registra un café.</p></div><form id="contribution"><h2>Registrar una aportación</h2><label for="kind">Tipo</label><select id="kind"><option value="payment">Pago a la caja</option><option value="coffee">Compra de café</option><option value="milk">Compra de leche</option><option value="sugar">Compra de azúcar</option></select><label for="money">Importe (€)</label><input id="money" type="text" inputmode="decimal" placeholder="Ej. 3,75" required maxlength="10"><label for="note">Nota (opcional)</label><input id="note" maxlength="160" placeholder="Ej. 2 paquetes de café"><button class="primary">Descontar de mi deuda</button></form></div><div class="row"><p class="small">¿Te has equivocado? Puedes anular tus apuntes en el historial.</p><button id="changePassword">Cambiar mi contraseña</button><button id="refresh">Actualizar cuentas</button></div></section>
 <section class="panel"><div class="row"><h2>Movimientos</h2><select id="filter" aria-label="Filtrar por compañero" style="width:auto;margin:0"><option value="all">Todos los compañeros</option></select></div><div id="history"></div></section>
 <section class="panel"><div class="row"><div><h2>Resumen del fondo</h2><p id="summary" class="small"></p></div><div><button id="export">Exportar movimientos</button> <input id="file" type="file" accept="application/json,.json" hidden></div></div><p class="small">Saldo individual = cafés × 0,50 € − pagos − compras. Un saldo negativo queda a favor del compañero. El neto de caja registra pagos menos compras; no incluye efectivo inicial ni representa un arqueo verificado.</p></section>
 <footer>Cuentas compartidas · Conexión HTTPS · Cierra tu sesión al terminar · Se bloquea tras 5 minutos sin actividad.</footer></main>
+<dialog id="passwordDialog"><form id="changeForm">
+<h2>Cambiar mi contraseña</h2>
+<label for="newPassword">Nueva contraseña (mínimo 12 caracteres)</label>
+<input id="newPassword" type="password" autocomplete="new-password" minlength="12" maxlength="100" required>
+<label for="confirmPassword">Repite la nueva contraseña</label>
+<input id="confirmPassword" type="password" autocomplete="new-password" required>
+<p id="changeError" role="alert"></p>
+<div class="row"><button type="button" id="cancelChange">Cancelar</button><button class="primary" id="savePassword">Guardar contraseña</button></div>
+</form></dialog>
 <dialog id="login"><form id="loginForm"><h2 id="loginTitle"></h2><p id="loginHint" class="small"></p><label for="password">Contraseña</label><input id="password" type="password" minlength="6" maxlength="100" required autocomplete="current-password"><div id="repeatWrap"><label for="repeat">Repetir contraseña</label><input id="repeat" type="password" maxlength="100" autocomplete="new-password"></div><p id="loginError" role="alert" style="color:#a32929"></p><div class="row"><button type="button" id="cancel">Cancelar</button><button class="primary" id="enter">Continuar</button></div></form></dialog><div id="message" role="status" hidden></div>
 <script src="config.js"></script><script>
 'use strict';
@@ -25,7 +34,35 @@ async function load(){const sessionToken=token;const all=[];let offset=0;for(;;)
 NAMES.forEach(n=>{const o=el('option',n);o.value=n;$('filter').append(o)});$('filter').onchange=render;
 function openLogin(n){if(!configured)return toast('Falta conectar la base de datos. Consulta CONFIGURACION.md en el repositorio.');if(current)return toast('Cierra tu sesión antes de entrar con otra cuenta.');target=n;$('loginForm').reset();$('loginError').textContent='';$('loginTitle').textContent='Entrar · '+n;$('loginHint').textContent='Introduce la contraseña que te ha entregado el administrador.';$('repeatWrap').hidden=true;$('repeat').required=false;$('password').minLength=6;$('login').showModal();$('password').focus()}
 $('cancel').onclick=()=>$('login').close();$('loginForm').onsubmit=async e=>{e.preventDefault();$('enter').disabled=true;try{const email=ALIASES[NAMES.indexOf(target)]+'@cafetera.example.com';const data=await api('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password:$('password').value}});token=data.access_token;if(!token)throw Error('No se pudo abrir la sesión.');const profiles=await api('/rest/v1/members?select=name&id=eq.'+encodeURIComponent(data.user.id));if(profiles.length!==1||profiles[0].name!==target)throw Error('Esta cuenta no está vinculada al compañero. Revisa la configuración.');current=target;await load();$('login').close();$('loginForm').reset();resetTimer();clearInterval(poll);poll=setInterval(()=>{if(current&&!busy)load().catch(err=>{toast(err.message);$('connection').textContent='Sin actualizar';})},30000);$('account').scrollIntoView({behavior:'smooth',block:'start'})}catch(err){token=null;current=null;entries=[];loaded=false;render();$('loginError').textContent=err.message}finally{$('enter').disabled=false}};
-function logout(){const old=token;token=null;current=null;entries=[];loaded=false;clearTimeout(lockTimer);clearInterval(poll);if($('login').open)$('login').close();$('loginForm').reset();$('contribution').reset();$('connection').textContent=configured?'Conexión preparada':'Pendiente de configurar';$('connectionHint').textContent=configured?'Entra en tu cuenta para consultar los movimientos.':'Configura Supabase siguiendo CONFIGURACION.md.';render();if(old)fetch(cfg.url+'/auth/v1/logout',{method:'POST',headers:{apikey:cfg.publishableKey,Authorization:'Bearer '+old}}).catch(()=>{})}
+const passwordDialog = $('passwordDialog');
+$('changePassword').onclick = () => {
+  if (!current) return;
+  $('changeError').textContent = '';
+  passwordDialog.showModal();
+};
+$('cancelChange').onclick = () => passwordDialog.close();
+passwordDialog.onclose = () => $('changeForm').reset();
+$('changeForm').onsubmit = async event => {
+  event.preventDefault();
+  if (!current || !token || $('savePassword').disabled) return;
+  const password = $('newPassword').value;
+  if (password !== $('confirmPassword').value) {
+    $('changeError').textContent = 'Las contraseñas no coinciden.';
+    return;
+  }
+  $('savePassword').disabled = true;
+  try {
+    await api('/auth/v1/user', {method: 'PUT', body: {password}});
+    logout();
+    toast('Contraseña guardada. Entra con tu nueva contraseña.');
+  } catch (error) {
+    $('changeError').textContent = error.message;
+    if (!passwordDialog.open) toast(error.message);
+  } finally {
+    $('savePassword').disabled = false;
+  }
+};
+function logout(){if(passwordDialog.open) passwordDialog.close();const old=token;token=null;current=null;entries=[];loaded=false;clearTimeout(lockTimer);clearInterval(poll);if($('login').open)$('login').close();$('loginForm').reset();$('contribution').reset();$('connection').textContent=configured?'Conexión preparada':'Pendiente de configurar';$('connectionHint').textContent=configured?'Entra en tu cuenta para consultar los movimientos.':'Configura Supabase siguiendo CONFIGURACION.md.';render();if(old)fetch(cfg.url+'/auth/v1/logout',{method:'POST',headers:{apikey:cfg.publishableKey,Authorization:'Bearer '+old}}).catch(()=>{})}
 function resetTimer(){if(current){clearTimeout(lockTimer);lockTimer=setTimeout(logout,300000)}}document.addEventListener('pointerdown',resetTimer);document.addEventListener('keydown',resetTimer);$('logout').onclick=logout;$('refresh').onclick=()=>load().catch(e=>toast(e.message));
 async function add(type,cents,note){if(!current||busy)return false;busy=true;render();const id=crypto.randomUUID();try{await api('/rest/v1/rpc/add_movement',{method:'POST',body:{p_id:id,p_type:type,p_cents:cents,p_note:note}});try{await load()}catch{toast('El apunte se guardó, pero no se ha podido actualizar la vista. Pulsa Actualizar cuentas.');return true}toast(type==='cup'?'Café apuntado · 0,50 €':'Aportación descontada');return true}catch(e){toast(e.message);return false}finally{busy=false;render()}}
 async function voidEntry(id){if(busy||!confirm('¿Anular este movimiento? Quedará visible como anulado.'))return;busy=true;render();try{await api('/rest/v1/rpc/void_movement',{method:'POST',body:{p_id:id}});await load();toast('Movimiento anulado.')}catch(e){toast(e.message)}finally{busy=false;render()}}
