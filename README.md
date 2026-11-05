@@ -1,4 +1,4 @@
-# Café de turno
+# Cafetera del turno A
 
 Microapp HTML para Juan Pablo, Moises, Jesus, Alejandro y Daniel. Café a precio fijo de **0,50 €**.
 
