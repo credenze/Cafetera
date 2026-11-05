@@ -4,7 +4,7 @@ alter table public.movements
   add column if not exists recipient text references public.members(name);
 alter table public.movements drop constraint if exists movements_type_check;
 alter table public.movements add constraint movements_type_check
-  check (type in ('cup','payment','coffee','milk','sugar','peer'));
+  check (type in ('cup','payment','coffee','milk','sugar','product','peer'));
 alter table public.movements drop constraint if exists movements_recipient_check;
 alter table public.movements add constraint movements_recipient_check check (
   (type = 'peer' and recipient is not null and recipient <> person)
@@ -45,4 +45,14 @@ begin
 end $$;
 revoke all on function public.pay_colleague(uuid,text,integer,text) from public, anon;
 grant execute on function public.pay_colleague(uuid,text,integer,text) to authenticated;
+create or replace function public.add_movement(p_id uuid,p_type text,p_cents integer,p_note text default '') returns void
+language plpgsql security definer set search_path = '' as $
+declare v_name text;
+begin
+ select name into v_name from public.members where id=auth.uid();
+ if v_name is null then raise exception 'Cuenta no autorizada'; end if;
+ if p_type is null or p_type not in ('cup','payment','coffee','milk','sugar','product') or p_cents is null or p_cents < 1 or p_cents > 1000000 or (p_type='cup' and p_cents<>50) or p_note is null or length(p_note)>160 then raise exception 'Movimiento no válido'; end if;
+ if p_type = 'product' and btrim(p_note) = '' then raise exception 'Escribe el concepto de la compra'; end if;
+ insert into public.movements(id,person,type,cents,note) values(p_id,v_name,p_type,p_cents,p_note);
+end $;
 commit;
