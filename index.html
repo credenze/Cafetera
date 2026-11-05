@@ -32,18 +32,30 @@ const euro=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).f
 }, 0);
 
 function updateRecipient() {
-  const fields = $('peerFields');
   const select = $('recipient');
-  fields.hidden = $('kind').value !== 'peer';
-  select.required = !fields.hidden;
-  if (fields.hidden) return;
-  const previous = select.value;
-  const eligible = NAMES.filter(name => current !== name && balance(name) < 0);
-  select.replaceChildren(...eligible.map(name => new Option(name, name)));
-  if (eligible.includes(previous)) select.value = previous;
-  const limit = Math.min(balance(current), -balance(select.value));
-  $('peerLimit').textContent = limit > 0 ? 'Puedes registrar hasta ' + euro(limit) + '.' :
-    'Para registrar el pago necesitas deuda pendiente y un compañero con saldo a favor.';
+  const peer = $('kind').value === 'peer';
+  $('peerFields').hidden = !peer;
+  select.required = peer;
+  let canSubmit = true;
+  if (peer) {
+    // Rebuild only on account change so a refresh never interrupts the mobile picker.
+    if (select.dataset.owner !== current) {
+      select.dataset.owner = current;
+      const placeholder = new Option('Elige un compañero', '');
+      select.replaceChildren(placeholder, ...NAMES.filter(name => name !== current)
+        .map(name => new Option(name, name)));
+    }
+    const name = select.value;
+    const debt = balance(current);
+    const credit = name ? -balance(name) : 0;
+    canSubmit = Boolean(name) && debt > 0 && credit > 0;
+    let hint = 'Elige a quién has entregado el dinero.';
+    if (name && credit <= 0) hint = name + ' no tiene saldo a favor. Si ha comprado algo para el turno, debe registrar primero la compra.';
+    else if (debt <= 0) hint = 'Tu cuenta no tiene deuda pendiente.';
+    else if (name) hint = 'Puedes pagar a ' + name + ' hasta ' + euro(Math.min(debt, credit)) + '.';
+    $('peerLimit').textContent = hint;
+  }
+  $('contribution').querySelector('button').disabled = busy || !canSubmit;
 }
 $('kind').onchange = updateRecipient;
 $('recipient').onchange = updateRecipient;
@@ -70,7 +82,7 @@ $('views').addEventListener('click', event => {
   selectedView = button.dataset.view;
   showView();
 });
-function render(){updateRecipient(); $('people').replaceChildren();NAMES.forEach(n=>{const b=el('button','','person'),v=balance(n);b.append(el('span',n.split(' ').map(x=>x[0]).join(''),'avatar'),el('span',n,'name'),el('span',loaded?euro(Math.abs(v)):'—','amount'),el('span',!loaded?'Entra para ver las cuentas':v<0?'a su favor':v===0?'al día':'pendiente de aportar','small'));if(current){b.onclick=()=>{$('filter').value=n;selectedView='ledger';render()}}else b.onclick=()=>openLogin(n);$('people').append(b)});showView();if(current){$('who').textContent=current;$('balance').textContent=euro(Math.abs(balance(current)));$('balanceLabel').textContent=balance(current)<0?'Saldo a tu favor':balance(current)===0?'Estás al día':'Tu deuda pendiente'}const list=entries.filter(e=>$('filter').value==='all'||(e.person===$('filter').value||e.recipient===$('filter').value)).slice().reverse();$('history').replaceChildren();if(!list.length)$('history').append(el('p',!loaded?'Entra en tu cuenta para consultar el historial.':'Todavía no hay movimientos.','small'));list.forEach(e=>{const row=el('div','','entry'),a=el('div'),date=new Date(e.date).toLocaleString('es-ES');a.append(el('strong',(e.type==='peer'?e.person+' → '+e.recipient:e.person+' · '+TYPES[e.type])+(e.void?' · ANULADO':'')),el('p',date+(e.note?' · '+e.note:'')));const right=el('div');right.append(el('strong',(e.type==='peer'?'':e.type==='cup'?'+':'−')+euro(e.cents)));if(current===e.person&&!e.void){const b=el('button','Anular');b.style.marginLeft='12px';b.disabled=busy;b.onclick=()=>voidEntry(e.id);right.append(b)}if(e.void)row.style.opacity='.5';row.append(a,right);$('history').append(row)});const a=active(),sum=t=>a.filter(e=>t.includes(e.type)).reduce((x,e)=>x+e.cents,0);$('summary').textContent=loaded?(sum(['cup'])/50)+' cafés · '+euro(sum(['payment']))+' pagados · '+euro(sum(['coffee','milk','sugar','product']))+' en compras · Neto de caja: '+euro(sum(['payment'])-sum(['coffee','milk','sugar','product'])):'Inicia sesión para consultar el resumen.';$('coffee').disabled=busy;$('contribution').querySelector('button').disabled=busy;$('export').disabled=!loaded;}
+function render(){updateRecipient(); $('people').replaceChildren();NAMES.forEach(n=>{const b=el('button','','person'),v=balance(n);b.append(el('span',n.split(' ').map(x=>x[0]).join(''),'avatar'),el('span',n,'name'),el('span',loaded?euro(Math.abs(v)):'—','amount'),el('span',!loaded?'Entra para ver las cuentas':v<0?'a su favor':v===0?'al día':'pendiente de aportar','small'));if(current){b.onclick=()=>{$('filter').value=n;selectedView='ledger';render()}}else b.onclick=()=>openLogin(n);$('people').append(b)});showView();if(current){$('who').textContent=current;$('balance').textContent=euro(Math.abs(balance(current)));$('balanceLabel').textContent=balance(current)<0?'Saldo a tu favor':balance(current)===0?'Estás al día':'Tu deuda pendiente'}const list=entries.filter(e=>$('filter').value==='all'||(e.person===$('filter').value||e.recipient===$('filter').value)).slice().reverse();$('history').replaceChildren();if(!list.length)$('history').append(el('p',!loaded?'Entra en tu cuenta para consultar el historial.':'Todavía no hay movimientos.','small'));list.forEach(e=>{const row=el('div','','entry'),a=el('div'),date=new Date(e.date).toLocaleString('es-ES');a.append(el('strong',(e.type==='peer'?e.person+' → '+e.recipient:e.person+' · '+TYPES[e.type])+(e.void?' · ANULADO':'')),el('p',date+(e.note?' · '+e.note:'')));const right=el('div');right.append(el('strong',(e.type==='peer'?'':e.type==='cup'?'+':'−')+euro(e.cents)));if(current===e.person&&!e.void){const b=el('button','Anular');b.style.marginLeft='12px';b.disabled=busy;b.onclick=()=>voidEntry(e.id);right.append(b)}if(e.void)row.style.opacity='.5';row.append(a,right);$('history').append(row)});const a=active(),sum=t=>a.filter(e=>t.includes(e.type)).reduce((x,e)=>x+e.cents,0);$('summary').textContent=loaded?(sum(['cup'])/50)+' cafés · '+euro(sum(['payment']))+' pagados · '+euro(sum(['coffee','milk','sugar','product']))+' en compras · Neto de caja: '+euro(sum(['payment'])-sum(['coffee','milk','sugar','product'])):'Inicia sesión para consultar el resumen.';$('coffee').disabled=busy;$('export').disabled=!loaded;}
 const sessionKey = 'cafetera:ocndjvzlyrdexhckmsvr:session';
 let remembered = false;
 let restoring = false;
